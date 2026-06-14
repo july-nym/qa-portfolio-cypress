@@ -24,7 +24,7 @@
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
-    "cypress": "^14.0.0",
+    "cypress": "^15.17.0",
     "eslint": "^8.57.1",
     "eslint-plugin-cypress": "^3.6.0",
     "mochawesome": "^7.1.3",
