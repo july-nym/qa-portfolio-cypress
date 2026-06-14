@@ -1,0 +1,9 @@
+{
+  "searchTerms": {
+    "valid": "dress",
+    "validAlt": "tshirt",
+    "noResults": "zzzqwertynotaproduct",
+    "specialChars": "!@#$%^&*()"
+  },
+  "knownProductName": "Blue Top"
+}

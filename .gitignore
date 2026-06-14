@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+# package-lock.json is committed — `npm ci` in CI requires it for reproducible installs.
+
+# Cypress artifacts
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress/reports/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.local
+cypress.env.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
