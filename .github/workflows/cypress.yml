@@ -1,0 +1,74 @@
+name: Cypress E2E
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    name: Cypress (${{ matrix.viewport }}, ${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Keep running other matrix legs even if one fails.
+      fail-fast: false
+      matrix:
+        include:
+          - viewport: desktop
+            browser: chrome
+            config: "viewportWidth=1280,viewportHeight=800"
+          - viewport: mobile
+            browser: chrome
+            config: "viewportWidth=375,viewportHeight=667"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          browser: ${{ matrix.browser }}
+          config: ${{ matrix.config }}
+          # Deps already installed above; skip the action's own install.
+          install: false
+        env:
+          # Secrets are injected from the repository settings, never committed.
+          CYPRESS_USER_EMAIL: ${{ secrets.CYPRESS_USER_EMAIL }}
+          CYPRESS_USER_PASSWORD: ${{ secrets.CYPRESS_USER_PASSWORD }}
+
+      - name: Merge & generate Mochawesome report
+        if: always()
+        run: npm run report || true
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report-${{ matrix.viewport }}
+          path: cypress/reports/html
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.viewport }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 7

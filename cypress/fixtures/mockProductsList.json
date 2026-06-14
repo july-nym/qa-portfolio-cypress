@@ -1,0 +1,26 @@
+{
+  "responseCode": 200,
+  "products": [
+    {
+      "id": 9001,
+      "name": "QA Portfolio Mock Tee",
+      "price": "Rs. 999",
+      "brand": "Mockoroo",
+      "category": { "usertype": { "usertype": "Women" }, "category": "Tops" }
+    },
+    {
+      "id": 9002,
+      "name": "Intercepted Hoodie",
+      "price": "Rs. 1499",
+      "brand": "Stubwear",
+      "category": { "usertype": { "usertype": "Men" }, "category": "Hoodies" }
+    },
+    {
+      "id": 9003,
+      "name": "Fixture Sneakers",
+      "price": "Rs. 2599",
+      "brand": "FakeStep",
+      "category": { "usertype": { "usertype": "Men" }, "category": "Shoes" }
+    }
+  ]
+}

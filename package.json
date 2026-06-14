@@ -1,0 +1,36 @@
+{
+  "name": "qa-portfolio-cypress",
+  "version": "1.0.0",
+  "description": "Cypress E2E test automation portfolio targeting automationexercise.com — POM, custom commands, API mocking, multi-viewport and CI.",
+  "author": "Julian Jackalz",
+  "license": "MIT",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:headed": "cypress run --headed",
+    "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:mobile": "cypress run --config viewportWidth=375,viewportHeight=667",
+    "test": "npm run clean:reports && cypress run",
+    "test:smoke": "cypress run --env grepTags=@smoke",
+    "clean:reports": "rimraf cypress/reports cypress/screenshots cypress/videos",
+    "report:merge": "mochawesome-merge cypress/reports/mochawesome/*.json > cypress/reports/output.json",
+    "report:generate": "marge cypress/reports/output.json --reportDir cypress/reports/html --inline",
+    "report": "npm run report:merge && npm run report:generate",
+    "posttest": "npm run report || true",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "cypress": "^14.0.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-cypress": "^3.6.0",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2"
+  }
+}
