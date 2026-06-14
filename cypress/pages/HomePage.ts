@@ -46,6 +46,13 @@ export class HomePage extends BasePage {
     return this;
   }
 
+  /** Assert the user is authenticated without depending on a specific account name. */
+  assertLoggedIn(): this {
+    cy.get(this.selectors.loggedInAs).should('be.visible');
+    cy.get(this.selectors.logoutLink).should('exist');
+    return this;
+  }
+
   assertLoggedOut(): this {
     cy.get(this.selectors.signupLoginLink).should('be.visible');
     cy.get(this.selectors.logoutLink).should('not.exist');

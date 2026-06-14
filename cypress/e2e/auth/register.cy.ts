@@ -31,8 +31,9 @@ describe('Authentication — Register', () => {
   });
 
   it('blocks signup with an already-registered email (negative)', () => {
-    cy.fixture('users').then(({ validUser, account }) => {
-      login.startSignup(`${account.firstName} ${account.lastName}`, validUser.email);
+    // Uses the real registered account email (env/secret) which already exists.
+    cy.fixture('users').then(({ account }) => {
+      login.startSignup(`${account.firstName} ${account.lastName}`, Cypress.env('userEmail'));
       login.assertSignupError('Email Address already exist!');
     });
   });

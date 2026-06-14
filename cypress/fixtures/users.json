@@ -1,8 +1,5 @@
 {
-  "validUser": {
-    "email": "qa.portfolio.demo@example.com",
-    "password": "Sup3rSecret!Pass"
-  },
+  "_note": "Real account credentials are NOT stored here. Login/checkout read Cypress.env('userEmail') / ('userPassword'), set via cypress.env.json locally or CYPRESS_USER_EMAIL / CYPRESS_USER_PASSWORD secrets in CI.",
   "invalidUser": {
     "email": "does.not.exist@example.com",
     "password": "wrongpassword"

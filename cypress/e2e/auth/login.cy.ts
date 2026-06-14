@@ -10,10 +10,9 @@ describe('Authentication — Login', () => {
   });
 
   it('logs in with valid credentials @smoke', () => {
-    cy.fixture('users').then(({ validUser, account }) => {
-      login.login(validUser.email, validUser.password);
-      home.assertLoggedInAs(`${account.firstName} ${account.lastName}`);
-    });
+    // Real account credentials come from env (CYPRESS_USER_EMAIL / _PASSWORD secrets in CI).
+    login.login(Cypress.env('userEmail'), Cypress.env('userPassword'));
+    home.assertLoggedIn();
   });
 
   it('rejects an unknown email / password (negative)', () => {
@@ -25,10 +24,8 @@ describe('Authentication — Login', () => {
   });
 
   it('rejects a valid email with the wrong password (negative)', () => {
-    cy.fixture('users').then(({ validUser }) => {
-      login.login(validUser.email, 'definitely-not-the-password');
-      login.assertLoginError();
-    });
+    login.login(Cypress.env('userEmail'), 'definitely-not-the-password');
+    login.assertLoginError();
   });
 
   it('does not authenticate when fields are empty (edge case)', () => {

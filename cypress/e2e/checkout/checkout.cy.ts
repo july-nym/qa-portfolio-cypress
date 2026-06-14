@@ -7,9 +7,9 @@ describe('Checkout — Process', () => {
   const home = new HomePage();
 
   it('completes checkout and places an order for a logged-in user @smoke', () => {
-    cy.fixture('users').then(({ validUser, card }) => {
+    cy.fixture('users').then(({ card }) => {
       // Authenticate via cached session for speed, then seed the cart.
-      cy.loginBySession(validUser.email, validUser.password);
+      cy.loginBySession(Cypress.env('userEmail'), Cypress.env('userPassword'));
       cy.addProductsToCart(2);
 
       cart.visit();
