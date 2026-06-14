@@ -11,6 +11,8 @@ jobs:
   cypress-run:
     name: Cypress (${{ matrix.viewport }}, ${{ matrix.browser }})
     runs-on: ubuntu-latest
+    # Hard cap so a misbehaving live site (e.g. redirect loops) can never hang the job.
+    timeout-minutes: 20
     strategy:
       # Keep running other matrix legs even if one fails.
       fail-fast: false

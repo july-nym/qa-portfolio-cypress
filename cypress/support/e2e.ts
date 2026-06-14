@@ -19,6 +19,20 @@ Cypress.on('uncaught:exception', (err) => {
   return true;
 });
 
+// The demo site loads Google ad/consent scripts (Funding Choices) that can force
+// repeated page reloads in headless CI, producing "redirected more than 20 times"
+// errors and hanging the run. Block those third-party hosts so they can't drive
+// navigation. App requests to automationexercise.com are untouched.
+beforeEach(() => {
+  cy.intercept(
+    {
+      hostname:
+        /doubleclick\.net|googlesyndication\.com|fundingchoicesmessages\.google\.com|adservice\.google\.|googletagservices\.com|google-analytics\.com|pagead2/,
+    },
+    { statusCode: 204, body: '' }
+  );
+});
+
 // Keep the command log readable when many XHRs fire (toggle via env.hideXHR).
 if (Cypress.env('hideXHR')) {
   const app = window.top;
