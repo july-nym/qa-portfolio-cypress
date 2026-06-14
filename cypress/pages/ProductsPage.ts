@@ -36,11 +36,23 @@ export class ProductsPage extends BasePage {
     return this;
   }
 
-  assertEveryResultContains(term: string): this {
-    cy.get(this.selectors.productName).each(($el) => {
-      expect($el.text().toLowerCase()).to.include(term.toLowerCase());
-    });
+  /**
+   * The site matches search terms against name, category AND brand, so not every
+   * result name contains the term. We only assert at least one result name does.
+   */
+  assertSomeResultContains(term: string): this {
+    cy.get(this.selectors.productName)
+      .then(($els) => Cypress._.map($els.toArray(), (el) => el.innerText.toLowerCase()))
+      .then((names) => {
+        expect(names.some((n) => n.includes(term.toLowerCase())), `a result name contains "${term}"`).to.be
+          .true;
+      });
     return this;
+  }
+
+  /** Number of product cards currently shown — useful for comparison assertions. */
+  resultCount(): Cypress.Chainable<number> {
+    return cy.get(this.selectors.productItem).its('length');
   }
 
   assertProductsLoaded(): this {

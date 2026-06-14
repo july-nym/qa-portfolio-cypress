@@ -11,7 +11,7 @@ describe('Products — Search', () => {
     cy.fixture('products').then(({ searchTerms }) => {
       products.search(searchTerms.valid);
       products.assertSearchResultsShown();
-      products.assertEveryResultContains(searchTerms.valid);
+      products.assertSomeResultContains(searchTerms.valid);
     });
   });
 
@@ -31,8 +31,13 @@ describe('Products — Search', () => {
   });
 
   it('treats search as case-insensitive (edge case)', () => {
-    products.search('DRESS');
+    // Lower- and upper-case queries should yield the same number of results.
+    products.search('dress');
     products.assertSearchResultsShown();
-    products.assertEveryResultContains('dress');
+    products.resultCount().then((lowerCount) => {
+      products.search('DRESS');
+      products.assertSearchResultsShown();
+      products.resultCount().should('eq', lowerCount);
+    });
   });
 });
