@@ -31,19 +31,22 @@ describe('API — Intercept & Mock', () => {
   });
 
   it('mocks the products listing entirely from a fixture (stub)', () => {
-    // Force the products page to render data we control, decoupled from the live DB.
-    cy.intercept('GET', '**/api/productsList', { fixture: 'mockProductsList.json' }).as('productsList');
-
-    // We assert against the fixture via cy.request so the test is deterministic
-    // regardless of whether the page consumes the JSON endpoint.
-    cy.request('GET', `${Cypress.env('apiUrl')}/productsList`).then((res) => {
-      expect(res.status).to.eq(200);
-      expect(res.body).to.have.property('products');
-    });
-
-    // And prove the stub is wired with the custom command too.
+    // Stub the products API with data we control, decoupled from the live DB.
+    // NOTE: cy.intercept only catches requests made by the *browser* — it does not
+    // intercept cy.request (which runs from Node). So we trigger the call from the
+    // page context with window.fetch and assert against the mock fixture.
     cy.stubProductsApi('mockProductsList.json');
-    cy.request('GET', `${Cypress.env('apiUrl')}/productsList`).its('status').should('eq', 200);
+
+    cy.visit('/');
+    cy.window()
+      .then((win) => win.fetch('/api/productsList').then((res) => res.json()))
+      .then((body: { products: Array<{ name: string }> }) => {
+        expect(body).to.have.property('products');
+        expect(body.products[0].name).to.eq('QA Portfolio Mock Tee');
+      });
+
+    // The interception was recorded with a 200 from the fixture.
+    cy.wait('@productsList').its('response.statusCode').should('eq', 200);
   });
 
   it('simulates a 500 error from the products API (negative)', () => {
@@ -52,14 +55,15 @@ describe('API — Intercept & Mock', () => {
       body: { responseCode: 500, message: 'Internal Server Error' },
     }).as('productsError');
 
-    cy.request({
-      method: 'GET',
-      url: `${Cypress.env('apiUrl')}/productsList`,
-      failOnStatusCode: false,
-    }).then((res) => {
-      // Live endpoint returns 200; this demonstrates how we'd handle a forced failure.
-      expect([200, 500]).to.include(res.status);
-    });
+    // Trigger from the browser so the stubbed 500 actually applies.
+    cy.visit('/');
+    cy.window()
+      .then((win) => win.fetch('/api/productsList').then((res) => ({ status: res.status })))
+      .then(({ status }) => {
+        expect(status).to.eq(500);
+      });
+
+    cy.wait('@productsError').its('response.statusCode').should('eq', 500);
   });
 
   it('injects network latency to test loading resilience (edge case)', () => {
